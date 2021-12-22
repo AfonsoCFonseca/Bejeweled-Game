@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+      "target": "es5"
+    },
+    "include": [
+      "src/ts/*.ts", "src/ts/Map/Map.ts", "src/ts/Utils/gameValues.ts"
+, "src/ts/Player/Player.ts"    ]
+  }

@@ -1,0 +1,58 @@
+{
+    //"extends": [],
+    "overrides": [
+        {
+            "rules": {
+                "indent": "off",
+                "@typescript-eslint/indent": ["warn", 4, {"SwitchCase": 1}],
+                "comma-dangle": "off",
+                "@typescript-eslint/comma-dangle": ["error", "never"],
+                "import/newline-after-import": "off",
+                "@typescript-eslint/import/newline-after-import": "off",
+                "no-use-before-define": "off",
+                "@typescript-eslint/no-use-before-define": "off",
+                "spaced-comment": "off",
+                "@typescript-eslint/spaced-comment": "off",
+                "max-len": "off",
+                "@typescript-eslint/max-len": ["warn", {"code": 120, "ignoreTemplateLiterals": true, "ignoreStrings": true, "ignoreComments": true}],
+                "no-console": "off",
+                "@typescript-eslint/no-console": "off",
+                "no-trailing-spaces": "off",
+                "@typescript-eslint/no-trailing-spaces": "off",
+                "lines-between-class-members": "off",
+                "@typescript-eslint/lines-between-class-members": "off"
+            },
+
+            "extends": "airbnb-typescript/base",
+            "files": ["*.ts"], // Your TypeScript files extension
+            "parserOptions": {
+                "project": ["./tsconfig.json"] // Specify it only for TypeScript files
+            }
+        },
+        {
+            "rules": {
+                "indent": ["warn", 4, {"SwitchCase": 1}],
+                "comma-dangle": ["error", "never"],
+                "import/newline-after-import": "off",
+                "no-use-before-define": "off",
+                "spaced-comment": "off",
+                "max-len": ["warn", {"code": 120, "ignoreTemplateLiterals": true, "ignoreStrings": true, "ignoreComments": true}],
+                "no-console": "off",
+                "no-trailing-spaces": "off",
+                "lines-between-class-members": "off"
+            },
+            "extends": "airbnb-base",
+            "files": ["*.js"]
+        }
+    ],
+    "plugins": [
+        "only-warn"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2017
+    },
+
+    "env": {
+        "es6": true
+    }
+}

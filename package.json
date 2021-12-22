@@ -1,0 +1,38 @@
+{
+  "name": "Double-Road",
+  "version": "1.1.0",
+  "description": "Original game using phaser with Typescript a no-sql DB Firebase",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "webpack",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@types/jquery": "^3.5.5",
+    "@typescript-eslint/eslint-plugin": "^4.14.2",
+    "@typescript-eslint/parser": "^4.14.2",
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-airbnb-typescript": "^12.0.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-only-warn": "^1.0.2",
+    "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^27.4.5",
+    "jest-canvas-mock": "^2.3.1",
+    "phaser": "^3.22.0",
+    "ts-jest": "^27.1.2",
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.8.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.11"
+  }
+}
