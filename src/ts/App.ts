@@ -1,35 +1,6 @@
-import 'phaser';
-
-export class GameScene extends Phaser.Scene {
-    //private playerCarsGroup: Phaser.GameObjects.Group;
-
-    constructor() {
-        super('GameScene')
-    }
-
-    preload() {
-        //this.load.image('background_overlay', 'assets/background_overlay2.png');
-        
-        // this.load.spritesheet('cars_sheet', 'assets/cars_sheet.png', {
-        //     frameWidth: gv.CAR.WIDTH,
-        //     frameHeight: gv.CAR.HEIGHT
-        // });
-
-        //this.menuGameOver = this.add.group();
-    }
-
-    create() {
-        return 3
-    }
-
-    startGame() {
-       
-    }
-
-    update() {
-       
-    }
-}
+import GameScene from './Scenes/GameScene'
+import MenuScene from './Scenes/MenuScene'
+import 'phaser'
 
 export const config = {
     type: Phaser.AUTO,
@@ -38,7 +9,7 @@ export const config = {
         parent: 'phaser-example',
         autoCenter: Phaser.Scale.CENTER_BOTH,
         width: 1920,
-        height: 1920,
+        height: 1720,
         backgroundColor: '#000000'
     },
     physics: {
@@ -47,7 +18,7 @@ export const config = {
         //debug: true,
         }
     },
-    scene: [GameScene]
+    scene: [GameScene, MenuScene]
 };
 
 export const game = new Phaser.Game(config);

@@ -20,7 +20,8 @@
                 "no-trailing-spaces": "off",
                 "@typescript-eslint/no-trailing-spaces": "off",
                 "lines-between-class-members": "off",
-                "@typescript-eslint/lines-between-class-members": "off"
+                "@typescript-eslint/lines-between-class-members": "off",
+                "class-methods-use-this": "off"
             },
 
             "extends": "airbnb-typescript/base",
