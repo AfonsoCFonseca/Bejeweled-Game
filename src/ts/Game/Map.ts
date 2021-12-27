@@ -16,25 +16,39 @@ export default class Map {
     }
 
     start() {
-        this.createMap();
+        let tempMap: Piece[][];
+        do {
+            if (tempMap) this.clearMap(tempMap);
+            tempMap = this.generateMap();
+        } while (this.isInitialBoardMatch(tempMap) === true);
+        this.currentMap = tempMap;
     }
 
-    createMap(): Piece[][] {
+    private clearMap(tempMap:Piece[][]) {
+        tempMap.forEach((line:Piece[]) => line.forEach((piece:Piece) => piece.destroy()));
+    }
+
+    generateMap(): Piece[][] {
+        const tempMap: Piece[][] = [[]];
         for (let i = 0; i < MAP.TOTAL_TILES_WIDTH; i++) {
-            this.currentMap[i] = [];
+            tempMap[i] = [];
             for (let j = 0; j < MAP.TOTAL_TILES_HEIGHT; j++) {
                 const x = (INITIAL_BOARD_SCREEN.WIDTH) + (i * (TILE.WIDTH));
                 const y = INITIAL_BOARD_SCREEN.HEIGHT + (j * (TILE.HEIGHT));
                 const pieceTypeLetter = getRandomValueFromArray(PIECE_TYPES);
                 const piece = new Piece(pieceTypeLetter, { x, y });
-                this.currentMap[i][j] = piece;
+                tempMap[i][j] = piece;
             }
         }
-        return this.currentMap;
+        return tempMap;
     }
 
     public getCurrentMap() {
         return this.currentMap;
+    }
+
+    public setCurrentMap(currentMap: Piece[][]) {
+        this.currentMap = currentMap;
     }
 
     public getTile(tilePos: PositionInTile): Piece {
@@ -59,12 +73,23 @@ export default class Map {
         }
         return false;
     }
+    private isInitialBoardMatch(tempMap: Piece[][]):boolean {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const x of tempMap) {
+            const found = x.find((piece:Piece) => this.checkMatch(tempMap, piece).matchArrOfPieces.length >= 3);
+            if (found) return true;
+        } 
 
-    public checkMatch(piece:Piece): Piece[] {
+        return false;
+    }
+
+    public checkMatch(map:Piece[][], piece:Piece): { matchArrOfPieces: Piece[], finalMap: Piece[][] } {
         const { pieceTypeByLetter } = piece;
         const arr = [1, -1, 1, -1];
-        let matchArrOfPieces: Piece[] = [piece]; //First Piece
+        let arrOfPiecesToMatch: Piece[] = [piece]; //First Piece
         let direction: 'horizontal' | 'vertical' = 'horizontal';
+        let matchArrOfPieces: Piece[] = []
+        let finalMap: Piece[][];
 
         for (let i = 0; i < 4; i++) {
             let tileX = piece.currentTile.tileX + arr[i];
@@ -76,17 +101,20 @@ export default class Map {
             }
 
             if (isNumberInsideBoard(i >= 2 ? tileY : tileX)) {
-                const pieceSelected = this.currentMap[tileX][tileY];
+                const pieceSelected = map[tileX][tileY];
                 if (pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
-                    matchArrOfPieces.push(pieceSelected); //Second Piece
-                    matchArrOfPieces = this.checkAdjacentForMatch(pieceSelected, piece, matchArrOfPieces, arr[i], direction); //Third and more Pieces
+                    arrOfPiecesToMatch.push(pieceSelected); //Second Piece
+                    let obj = this.checkAdjacentForMatch(map, pieceSelected, piece, arrOfPiecesToMatch, arr[i], direction); //Third and more Pieces
+                    matchArrOfPieces = obj.matchArrOfPieces;
+                    finalMap = obj.finalMap;
                 }
             }
         }
-        return matchArrOfPieces;
+        return { matchArrOfPieces, finalMap };
     }
 
-    private checkAdjacentForMatch(pieceSelected, piece, matchArrOfPieces, currentValueSide, direction: 'horizontal' | 'vertical'): Piece[] {
+    private checkAdjacentForMatch(map, pieceSelected, piece, arrOfPiecesToMatch, currentValueSide, direction: 'horizontal' | 'vertical'): 
+    { matchArrOfPieces: Piece[], finalMap: Piece[][] } {
         const { pieceTypeByLetter } = piece;
         let nextMatch = currentValueSide < 0 ? -1 : 1;
         let tileX = direction === 'horizontal' ? piece.currentTile.tileX + (currentValueSide + nextMatch) : piece.currentTile.tileX;
@@ -94,15 +122,20 @@ export default class Map {
         //let nextPosition = piece.currentTile.tileX + (currentValueSide + nextMatch);
 
         if (isNumberInsideBoard(direction === 'horizontal' ? tileX : tileY)) {
-            pieceSelected = this.currentMap[tileX][tileY];
+            pieceSelected = map[tileX][tileY];
             while (pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
                 nextMatch += currentValueSide < 0 ? -1 : 1;
-                matchArrOfPieces.push(pieceSelected);
+                arrOfPiecesToMatch.push(pieceSelected);
                 tileX = direction === 'horizontal' ? piece.currentTile.tileX + (currentValueSide + nextMatch) : piece.currentTile.tileX;
                 tileY = direction === 'horizontal' ? piece.currentTile.tileY : piece.currentTile.tileY + (currentValueSide + nextMatch);
-                pieceSelected = this.currentMap[tileX][tileY];
+                if (!isNumberInsideBoard(direction === 'horizontal' ? tileX : tileY)) break;
+                pieceSelected = map[tileX][tileY];
             }
         }
-        return matchArrOfPieces;
+
+        return { 
+            matchArrOfPieces: arrOfPiecesToMatch,
+            finalMap: map
+        };
     }
 }

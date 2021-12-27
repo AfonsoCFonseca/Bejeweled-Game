@@ -36,9 +36,10 @@ export default class Piece extends Phaser.GameObjects.Sprite {
             gameManager.resetPiecesForAction();
             await this.switch(gameManager.lastPiece);
 
-            const piecesToMatch = map.checkMatch(gameManager.lastPiece);
-            if (piecesToMatch.length >= 3) {
-                await gameManager.matchIt(piecesToMatch);
+            const { matchArrOfPieces, finalMap } = map.checkMatch(map.getCurrentMap(), gameManager.lastPiece);
+            map.setCurrentMap(finalMap);
+            if (matchArrOfPieces.length >= 3) {
+                await gameManager.matchIt(matchArrOfPieces);
             } else {
                 await this.switch(gameManager.lastPiece);
             }
