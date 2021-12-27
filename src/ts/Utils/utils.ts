@@ -1,8 +1,9 @@
 import { PIECE_TYPES, PositionInPixel, PositionInTile, TileNumbers } from '../game.interfaces';
+import Piece from '../Game/Piece';
 import { gameScene } from '../Scenes/GameScene'
-import { INITIAL_BOARD_SCREEN, TILE } from './gameValues';
+import { INITIAL_BOARD_SCREEN, MAP, TILE } from './gameValues';
 
-export function getRandomValueFromArray(arr: any[]): any {
+export function getRandomValueFromArray(arr: any[]): string {
     const rndNum = this.rndNumber(0, arr.length - 1, true);
     return arr[rndNum];
 }
@@ -10,10 +11,15 @@ export function rndNumber(min: number, max: number, round = false): number {
     if (round) return Math.round(Math.random() * (max - min) + min);
     return Math.random() * (max - min) + min;
 }
-export function convertToPositionInTile(positionInPixel: PositionInPixel): PositionInTile {
+export function convertPositionToTile(positionInPixel: PositionInPixel): PositionInTile {
     const tileX = (positionInPixel.x - INITIAL_BOARD_SCREEN.WIDTH) / TILE.WIDTH as TileNumbers;
     const tileY = (positionInPixel.y - INITIAL_BOARD_SCREEN.HEIGHT) / TILE.HEIGHT as TileNumbers;
     return { tileX, tileY };
+}
+export function convertTileToPosition(positionInTile: PositionInTile): PositionInPixel {
+    const x = positionInTile.tileX * TILE.WIDTH + INITIAL_BOARD_SCREEN.WIDTH;
+    const y = positionInTile.tileY * TILE.HEIGHT + INITIAL_BOARD_SCREEN.HEIGHT;
+    return { x, y };
 }
 export function getPieceTypeEnum(type:string): PIECE_TYPES | null {
     switch (type) {
@@ -57,7 +63,7 @@ export function getPieceTypeNumber(type:string): number {
             return null;
     }
 }
-export const makeAnimation = (target, { x, y }, duration) => new Promise<void>((resolve) => {
+export const makeMovementAnimation = (target, { x, y }, duration) => new Promise<void>((resolve) => {
     gameScene.tweens.add({
         targets: target,
         x,
@@ -70,3 +76,21 @@ export const makeAnimation = (target, { x, y }, duration) => new Promise<void>((
         }
     });
 });
+export const makeScaleAnimation = (pieces:Piece[]) => new Promise<void>((resolve) => {
+    gameScene.tweens.add({
+        targets: pieces,
+        scaleX: 0,
+        scaleY: 0,
+        ease: 'Linear',
+        duration: 300,
+        yoyo: false,
+        repeat: 0,
+        onComplete() {
+            resolve();
+        }
+    });
+});
+export const isNumberInsideBoard = (currentNumb:number):boolean => {
+    if (currentNumb >= MAP.TOTAL_TILES_WIDTH || currentNumb <= 0) return false;
+    return true;
+};

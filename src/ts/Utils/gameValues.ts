@@ -24,6 +24,6 @@ export const HALF_SCREEN = {
 };
 
 export const INITIAL_BOARD_SCREEN = {
-    WIDTH: (HALF_SCREEN.WIDTH / 2 + 100),
-    HEIGHT: 150
+    WIDTH: (HALF_SCREEN.WIDTH / 2 + 200),
+    HEIGHT: 300
 };
