@@ -26,27 +26,9 @@ export default class Piece extends Phaser.GameObjects.Sprite {
     }
 
     private async isClicked() {
-        const isAction = await this.makeAction();
+        const isAction = await gameManager.piecesMovement(this);
         
         if (!isAction) this.makeSelection();
-    }
-
-    private async makeAction(): Promise<boolean> {
-        if (gameManager.isPieceSelectedInFrame && map.isPieceAdjacent(this)) {
-            gameManager.resetPiecesForAction();
-            await this.switch(gameManager.lastPiece);
-
-            const { matchArrOfPieces, finalMap } = map.checkMatch(map.getCurrentMap(), gameManager.lastPiece);
-            map.setCurrentMap(finalMap);
-            if (matchArrOfPieces.length >= 3) {
-                await gameManager.matchIt(matchArrOfPieces);
-            } else {
-                await this.switch(gameManager.lastPiece);
-            }
-
-            return true;
-        }
-        return false;
     }
 
     private makeSelection() {
@@ -56,7 +38,7 @@ export default class Piece extends Phaser.GameObjects.Sprite {
         }
     }
 
-    private async switch(chosenPiece: Piece) {
+    public async switch(chosenPiece: Piece) {
         await gameManager.makeTwoPieceAnimation(this, chosenPiece);
 
         const cTile = this.currentTile;
@@ -64,7 +46,7 @@ export default class Piece extends Phaser.GameObjects.Sprite {
         chosenPiece.updatePiecePositionAndTile(cTile);
     }
 
-    private updatePiecePositionAndTile(tile: PositionInTile) {
+    public updatePiecePositionAndTile(tile: PositionInTile) {
         this.currentTile = tile;
         this.currentPosition = convertTileToPosition(tile);
         map.setPieceOnTile(this, tile);

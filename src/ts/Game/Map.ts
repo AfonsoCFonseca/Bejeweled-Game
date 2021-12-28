@@ -1,6 +1,6 @@
 import { PositionInTile, TileNumbers } from '../game.interfaces';
 import { HALF_SCREEN, MAP, TILE, PIECE_TYPES, INITIAL_BOARD_SCREEN, TOTAL_OF_PIECE_TYPE } from '../Utils/gameValues';
-import { getRandomValueFromArray, getPieceTypeNumber, isNumberInsideBoard } from '../Utils/utils';
+import { getRandomValueFromArray, getPieceTypeNumber, isNumberInsideBoard, convertTileToPosition } from '../Utils/utils';
 import { gameManager } from './GameManager';
 import Piece from './Piece'
 //import * as gv from '../Utils/gameValues';
@@ -16,12 +16,38 @@ export default class Map {
     }
 
     start() {
+        this.createRealMap();
+        // this.createFakeMap();
+    }
+
+    createRealMap() {
         let tempMap: Piece[][];
         do {
             if (tempMap) this.clearMap(tempMap);
             tempMap = this.generateMap();
         } while (this.isInitialBoardMatch(tempMap) === true);
         this.currentMap = tempMap;
+    }
+
+    createFakeMap() {
+        let newFakeMap: Piece[][] = [];
+        const fakeMap = [
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'g', 'g', 'p', 'w', 'w', 'w'],
+            ['w', 'w', 'p', 'p', 'g', 'w', 'r', 'r'],
+            ['w', 'r', 'r', 'r', 'r', 'r', 'r', 'r'],
+            ['w', 'r', 'r', 'r', 'r', 'r', 'r', 'r'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'r', 'r'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w']
+        ];
+
+        fakeMap.forEach((line, i) => line.forEach((piece, j) => {
+            if (!newFakeMap[i] || newFakeMap[i].length === 0) newFakeMap[i] = [];
+            newFakeMap[i].push(new Piece(piece, convertTileToPosition({ tileX: i as TileNumbers, tileY: j as TileNumbers })));
+        }));
+
+        this.currentMap = newFakeMap;
     }
 
     private clearMap(tempMap:Piece[][]) {
@@ -51,11 +77,11 @@ export default class Map {
         this.currentMap = currentMap;
     }
 
-    public getTile(tilePos: PositionInTile): Piece {
+    public getPieceOnTile(tilePos: PositionInTile): Piece {
         return this.currentMap[tilePos.tileX][tilePos.tileY];
     }
 
-    public setPieceOnTile(newPiece:Piece, tile: PositionInTile) {
+    public setPieceOnTile(newPiece:Piece | null, tile: PositionInTile) {
         this.currentMap[tile.tileX][tile.tileY] = newPiece;
     }
 
@@ -88,7 +114,7 @@ export default class Map {
         const arr = [1, -1, 1, -1];
         let arrOfPiecesToMatch: Piece[] = [piece]; //First Piece
         let direction: 'horizontal' | 'vertical' = 'horizontal';
-        let matchArrOfPieces: Piece[] = []
+        let matchArrOfPieces: Piece[] = [];
         let finalMap: Piece[][];
 
         for (let i = 0; i < 4; i++) {
@@ -120,7 +146,6 @@ export default class Map {
         let tileX = direction === 'horizontal' ? piece.currentTile.tileX + (currentValueSide + nextMatch) : piece.currentTile.tileX;
         let tileY = direction === 'horizontal' ? piece.currentTile.tileY : piece.currentTile.tileY + (currentValueSide + nextMatch);
         //let nextPosition = piece.currentTile.tileX + (currentValueSide + nextMatch);
-
         if (isNumberInsideBoard(direction === 'horizontal' ? tileX : tileY)) {
             pieceSelected = map[tileX][tileY];
             while (pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {

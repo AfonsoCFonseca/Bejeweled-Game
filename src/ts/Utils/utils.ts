@@ -91,6 +91,6 @@ export const makeScaleAnimation = (pieces:Piece[]) => new Promise<void>((resolve
     });
 });
 export const isNumberInsideBoard = (currentNumb:number):boolean => {
-    if (currentNumb >= MAP.TOTAL_TILES_WIDTH || currentNumb <= 0) return false;
+    if (currentNumb >= MAP.TOTAL_TILES_WIDTH || currentNumb < 0) return false;
     return true;
 };
