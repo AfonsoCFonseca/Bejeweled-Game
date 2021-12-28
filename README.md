@@ -47,7 +47,7 @@ upgrade piece after a 4> piece match
 upgrade piece after a L piece match
 
 ---------------------------------------------------------------
-# Scratches & Evolution
+# Sketches & Evolution
 
  <p float="left">
    <img width="255" height="235" src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/main/screenshots/24_12.png' >
