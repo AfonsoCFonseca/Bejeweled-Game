@@ -3,6 +3,7 @@ import { INITIAL_BOARD_SCREEN, TILE } from '../Utils/gameValues';
 import GameManager, { gameManager } from '../Game/GameManager';
 
 export let gameScene: Phaser.Scene;
+export let scoreText; 
 
 export default class GameScene extends Phaser.Scene {
     //private playerCarsGroup: Phaser.GameObjects.Group;
@@ -30,11 +31,11 @@ export default class GameScene extends Phaser.Scene {
     create() {
         this.add.image(0, 0, 'background1').setDepth(1).setOrigin(0, 0);
         this.add.image(INITIAL_BOARD_SCREEN.WIDTH - TILE.WIDTH / 2, INITIAL_BOARD_SCREEN.HEIGHT - TILE.HEIGHT / 2, 'backgroundBoard').setDepth(1).setOrigin(0, 0);
-        this.add.image(INITIAL_BOARD_SCREEN.WIDTH - TILE.WIDTH / 2 - 20, INITIAL_BOARD_SCREEN.HEIGHT - TILE.HEIGHT / 2 -20, 'Border').setDepth(1).setOrigin(0, 0);
+        this.add.image(INITIAL_BOARD_SCREEN.WIDTH - TILE.WIDTH / 2 - 20, INITIAL_BOARD_SCREEN.HEIGHT - TILE.HEIGHT / 2 - 20, 'Border').setDepth(1).setOrigin(0, 0);
         this.add.image(170, INITIAL_BOARD_SCREEN.HEIGHT - TILE.HEIGHT / 2 - 20, 'ScoreBoard').setDepth(1).setOrigin(0, 0);
         this.add.image(170 - 20, INITIAL_BOARD_SCREEN.HEIGHT - TILE.HEIGHT / 2 - 20, 'ScoreBorder').setDepth(1).setOrigin(0, 0);
-        this.add.text(190, INITIAL_BOARD_SCREEN.HEIGHT, "Score: 2500", { font: 'bold 53px Geneva' }).setDepth(1);
         new GameManager();
+        scoreText = this.add.text(190, INITIAL_BOARD_SCREEN.HEIGHT, `Score: ${gameManager.score}`, { font: 'bold 53px Geneva' }).setDepth(1);
     }
 
     startGame() {

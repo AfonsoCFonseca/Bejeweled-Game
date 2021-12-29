@@ -33,13 +33,13 @@ export default class Map {
         let newFakeMap: Piece[][] = [];
         const fakeMap = [
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'g', 'g', 'p', 'w', 'w', 'w'],
-            ['w', 'w', 'p', 'p', 'g', 'w', 'r', 'r'],
-            ['w', 'r', 'r', 'r', 'r', 'r', 'r', 'r'],
-            ['w', 'r', 'r', 'r', 'r', 'r', 'r', 'r'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'r', 'r'],
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w']
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
         ];
 
         fakeMap.forEach((line, i) => line.forEach((piece, j) => {
@@ -121,6 +121,7 @@ export default class Map {
             let tileX = piece.currentTile.tileX + arr[i];
             let { tileY } = piece.currentTile;
             if (i >= 2) {
+                if (i === 2) arrOfPiecesToMatch = [piece];
                 direction = 'vertical';
                 tileX = piece.currentTile.tileX;
                 tileY = piece.currentTile.tileY + arr[i] as TileNumbers;
@@ -130,12 +131,15 @@ export default class Map {
                 const pieceSelected = map[tileX][tileY];
                 if (pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
                     arrOfPiecesToMatch.push(pieceSelected); //Second Piece
-                    let obj = this.checkAdjacentForMatch(map, pieceSelected, piece, arrOfPiecesToMatch, arr[i], direction); //Third and more Pieces
-                    matchArrOfPieces = obj.matchArrOfPieces;
+                    const obj = this.checkAdjacentForMatch(map, pieceSelected, piece, arrOfPiecesToMatch, arr[i], direction); //Third and more Pieces
+
+                    if (obj.matchArrOfPieces.length >= 3) matchArrOfPieces = matchArrOfPieces.concat(obj.matchArrOfPieces);
                     finalMap = obj.finalMap;
                 }
             }
         }
+
+
         return { matchArrOfPieces, finalMap };
     }
 

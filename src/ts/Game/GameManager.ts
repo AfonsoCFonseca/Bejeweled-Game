@@ -1,8 +1,8 @@
 import Piece from './Piece'
 import Map, { map } from './Map'
 import { convertTileToPosition, isNumberInsideBoard, makeMovementAnimation, makeScaleAnimation } from '../Utils/utils';
-import { gameScene } from '../Scenes/GameScene';
-import { PositionInTile, TileNumbers } from '../game.interfaces';
+import { gameScene, scoreText } from '../Scenes/GameScene';
+import { PositionInTile, ScoreTypes, TileNumbers } from '../game.interfaces';
 //import * as gv from '../Utils/gameValues';
 // eslint-disable-next-line import/prefer-default-export
 export let gameManager: GameManager
@@ -11,6 +11,7 @@ export default class GameManager {
     public map: Map;
     lastPiece: Piece;
     currentPiece: Piece;
+    score = 0;
     isPieceSelectedInFrame = false;
 
     constructor() {
@@ -37,6 +38,33 @@ export default class GameManager {
         this.currentPiece = null;
         this.lastPiece.clearFrame();
         this.isPieceSelectedInFrame = false;
+    }
+
+    private scoreIt(scoreToType: ScoreTypes) {
+        switch (scoreToType) {
+            case '3line': 
+                this.score = 100;
+                break;
+            case '5line': 
+                this.score = 100;
+                break;
+            case '6line': 
+                this.score = 100;
+                break;
+            case '4line': 
+                this.score = 100;
+                break;
+            case '4L':
+                this.score = 100;
+                break;
+            case '3L':
+                this.score = 100;
+                break;
+            default:
+                console.log('No scoreType was found');
+        }
+        
+        scoreText.setText(`Score: ${this.score}`);
     }
 
     public async makeTwoPieceAnimation(currentPiece: Piece, lastPiece: Piece): Promise<null> {
@@ -84,6 +112,7 @@ export default class GameManager {
     public async matchIt(pieces:Piece[]): Promise<null> {
         await makeScaleAnimation(pieces);
         pieces.forEach((piece) => piece.destroy());
+        this.scoreIt('3line');
         return null;
     }
 

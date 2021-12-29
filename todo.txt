@@ -1,3 +1,17 @@
 Pieces fall
 More Map Generation
 If the more shows an unmatchable set, it should generate again
+Score with proper matches
+
+
+
+const fakeMap = [
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+        ];
