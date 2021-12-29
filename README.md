@@ -5,7 +5,7 @@ Classic Bejeweled game in Phaser 3.0 written in Typescript with Jest unit test
 
 
 <p align="center">
-  <img src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/master/screenshots/ImageBorderGithub.png'>
+  <img src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/main/screenshots/ImageBorderGithub.png'>
 </p>
 
 
@@ -47,10 +47,10 @@ upgrade piece after a 4> piece match
 upgrade piece after a L piece match
 
 ---------------------------------------------------------------
-# Scratches & Evolution
+# Sketches & Evolution
 
  <p float="left">
-   <img width="186" height="235" src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/master/screenshots/24_12.png' >
-   <img width="186" height="235" src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/master/screenshots/26_12.png' >
-   <img width="186" height="235" src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/master/screenshots/26_12_2.png' >
+   <img width="255" height="235" src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/main/screenshots/24_12.png' >
+   <img width="255" height="235" src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/main/screenshots/26_12.png' >
+   <img width="255" height="235" src='https://github.com/AfonsoCFonseca/Bejeweled-Game/blob/main/screenshots/26_12_2.png' >
  </p>
