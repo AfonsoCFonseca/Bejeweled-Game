@@ -3,6 +3,8 @@ export const FRAMES_PER_SECOND = 60;
 export const TOTAL_OF_PIECE_TYPE = 7;
 export const PIECE_TYPES = ['w', 'r', 'y', 'g', 'o', 'b', 'p'];
 
+export const LEVEL_SCORE_TO_ADD = 1200;
+
 export const TILE = {
     WIDTH: 150,
     HEIGHT: 150

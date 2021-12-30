@@ -1,6 +1,6 @@
 import { PositionInTile, TileNumbers } from '../game.interfaces';
 import { HALF_SCREEN, MAP, TILE, PIECE_TYPES, INITIAL_BOARD_SCREEN, TOTAL_OF_PIECE_TYPE } from '../Utils/gameValues';
-import { getRandomValueFromArray, getPieceTypeNumber, isNumberInsideBoard, convertTileToPosition } from '../Utils/utils';
+import { getRandomValueFromArray, getPieceTypeNumber, isNumberInsideBoard, convertTileToPosition, removeDuplicates } from '../Utils/utils';
 import { gameManager } from './GameManager';
 import Piece from './Piece'
 //import * as gv from '../Utils/gameValues';
@@ -34,9 +34,9 @@ export default class Map {
         const fakeMap = [
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'w', 'g', 'w', 'w', 'w'],
+            ['w', 'w', 'w', 'g', 'r', 'g', 'g', 'w'],
+            ['w', 'w', 'w', 'w', 'g', 'w', 'w', 'w'],
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
@@ -129,7 +129,7 @@ export default class Map {
 
             if (isNumberInsideBoard(i >= 2 ? tileY : tileX)) {
                 const pieceSelected = map[tileX][tileY];
-                if (pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
+                if (pieceSelected && pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
                     arrOfPiecesToMatch.push(pieceSelected); //Second Piece
                     const obj = this.checkAdjacentForMatch(map, pieceSelected, piece, arrOfPiecesToMatch, arr[i], direction); //Third and more Pieces
 
@@ -138,7 +138,7 @@ export default class Map {
                 }
             }
         }
-
+        matchArrOfPieces = removeDuplicates(matchArrOfPieces);
 
         return { matchArrOfPieces, finalMap };
     }
@@ -152,7 +152,7 @@ export default class Map {
         //let nextPosition = piece.currentTile.tileX + (currentValueSide + nextMatch);
         if (isNumberInsideBoard(direction === 'horizontal' ? tileX : tileY)) {
             pieceSelected = map[tileX][tileY];
-            while (pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
+            while (pieceSelected && pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
                 nextMatch += currentValueSide < 0 ? -1 : 1;
                 arrOfPiecesToMatch.push(pieceSelected);
                 tileX = direction === 'horizontal' ? piece.currentTile.tileX + (currentValueSide + nextMatch) : piece.currentTile.tileX;

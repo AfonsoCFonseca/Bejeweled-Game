@@ -90,6 +90,17 @@ export const makeScaleAnimation = (pieces:Piece[]) => new Promise<void>((resolve
         }
     });
 });
+export const removeDuplicates = (pieces: Piece[]): Piece[] => {
+    pieces.forEach((mainPiece, mainIndex) => {
+        pieces.forEach((piece, index) => {
+            if (mainIndex !== index && mainPiece.currentTile.tileX === piece.currentTile.tileX && mainPiece.currentTile.tileY === piece.currentTile.tileY) {
+                pieces.splice(index, 1); 
+            }
+        }); 
+    });
+    return pieces;
+};
+
 export const isNumberInsideBoard = (currentNumb:number):boolean => {
     if (currentNumb >= MAP.TOTAL_TILES_WIDTH || currentNumb < 0) return false;
     return true;
