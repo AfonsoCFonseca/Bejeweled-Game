@@ -39,8 +39,12 @@ Made the first action by making a second click where I wish to move my previous 
 Implemented some move animation to the switching pieces and scale animations to the matching pieces. Made a few tweaks to the UI, adding a border and a scoreboard.
 After that, I had to upgrade the first generation of the map ( since the generations were creating some premade matches between pieces ) by using the same method of the user action but for every piece on the map, each time a match was found, I deleted the current map and started a new one.
 
-When a piece is matched, it should delete itself and call the method to bring down the upper pieces on the Y axis, if there's an empty space above, it shoudl call the next piece.
-It was also necessary to implement the match system for the oposide piece that is moving when an action is made.
+When a piece is matched, it should delete itself and call the method to bring down the upper pieces on the Y axis, if there's an empty space above, it should call the next piece.
+It was also necessary to implement the match system for the opposite piece that is moving when an action is made.
+
+Created a level system that levels up every time the user reaches another 1200 score to the total score he has. For a better understanding of the progress in the game, I've added a UI bar to let the user know in which part of the level he is, depending on his score, I also, added text to inform the user of his current. Made a few improvements to the scoring system and created some exploding sounds for each time a match is made. The button reset was added to the UI for a fast reset of the board, level and score.
+
+Every time a set of pieces match, I generate the exact number of pieces on the same Y axis with an X axis of (x * TILE.HEIGHT) + initial board height with a random generation of piece_type, then set the current empty tiles on the board to the generated ones and add animation so they move from the upper board to the desired location
 
 # Future Implementation
 upgrade piece after a 4> piece match

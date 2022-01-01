@@ -1,6 +1,7 @@
-Pieces fall
 More Map Generation
-If the more shows an unmatchable set, it should generate again
+Finish Reset Button
+Match after Match
+If the more shows an unmatchable set, it should generate GameOver
 Score with proper matches
 
 
