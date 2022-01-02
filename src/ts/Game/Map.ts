@@ -20,26 +20,34 @@ export default class Map {
         // this.createFakeMap();
     }
 
+    public resetMap() {
+        this.currentMap.forEach((line) => line.forEach((piece) => {
+            piece.destroy();
+            this.currentMap = [];
+        }));
+        this.start();
+    }
+
     createRealMap() {
         let tempMap: Piece[][];
         do {
             if (tempMap) this.clearMap(tempMap);
             tempMap = this.generateMap();
-        } while (this.isInitialBoardMatch(tempMap) === true);
+        } while (this.isBoardMatch(tempMap).isMatch === true);
         this.currentMap = tempMap;
     }
 
     createFakeMap() {
         let newFakeMap: Piece[][] = [];
         const fakeMap = [
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'g', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'g', 'r', 'g', 'g', 'w'],
-            ['w', 'w', 'w', 'w', 'g', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
-            ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
+            ['y', 'y', 'g', 'y', 'r', 'w', 'w', 'r'],
+            ['g', 'b', 'w', 'r', 'g', 'r', 'p', 'y'],
+            ['y', 'r', 'g', 'w', 'y', 'r', 'w', 'r'],
+            ['b', 'y', 'b', 'g', 'r', 'r', 'g', 'w'],
+            ['r', 'g', 'p', 'w', 'w', 'g', 'y', 'y'],
+            ['y', 'y', 'p', 'b', 'y', 'y', 'y', 'g'],
+            ['b', 'g', 'r', 'y', 'y', 'b', 'r', 'p'],
+            ['g', 'y', 'w', 'b', 'w', 'b', 'w', 'g']
         ];
 
         fakeMap.forEach((line, i) => line.forEach((piece, j) => {
@@ -99,14 +107,21 @@ export default class Map {
         }
         return false;
     }
-    private isInitialBoardMatch(tempMap: Piece[][]):boolean {
+    public isBoardMatch(tempMap: Piece[][]): { isMatch: boolean, piece: Piece } {
+        const result = {
+            isMatch: false,
+            piece: null
+        };
         // eslint-disable-next-line no-restricted-syntax
         for (const x of tempMap) {
             const found = x.find((piece:Piece) => this.checkMatch(tempMap, piece).matchArrOfPieces.length >= 3);
-            if (found) return true;
+            if (found && found.active === true) {
+                result.isMatch = true;
+                result.piece = found;
+            } 
         } 
 
-        return false;
+        return result;
     }
 
     public checkMatch(map:Piece[][], piece:Piece): { matchArrOfPieces: Piece[], finalMap: Piece[][] } {

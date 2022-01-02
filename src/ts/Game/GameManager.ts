@@ -1,9 +1,9 @@
 import Piece from './Piece'
 import Map, { map } from './Map'
-import { convertTileToPosition, getRandomValueFromArray, isNumberInsideBoard, makeMovementAnimation, makeScaleAnimation, rndNumber } from '../Utils/utils';
+import { average, convertTileToPosition, getPieceHashColor, getRandomValueFromArray, isNumberInsideBoard, makeMovementAnimation, makeScaleAnimation, rndNumber, timeout } from '../Utils/utils';
 import { gameScene, levelBarImg, scoreText, levelText } from '../Scenes/GameScene';
-import { PositionInTile, ScoreTypes, TileNumbers } from '../game.interfaces';
-import { INITIAL_BOARD_SCREEN, LEVEL_SCORE_TO_ADD, PIECE_TYPES, TILE } from '../Utils/gameValues';
+import { PositionInPixel, PositionInTile, ScoreTypes, TileNumbers } from '../game.interfaces';
+import { HALF_SCREEN, INITIAL_BOARD_SCREEN, LEVEL_SCORE_TO_ADD, PIECE_TYPES, TILE } from '../Utils/gameValues';
 //import * as gv from '../Utils/gameValues';
 // eslint-disable-next-line import/prefer-default-export
 export let gameManager: GameManager
@@ -15,6 +15,7 @@ export default class GameManager {
     score: number;
     level: number;
     scoreObjective: number;
+    previousScoreObjective: number;
     isPieceSelectedInFrame = false;
 
     constructor() {
@@ -23,23 +24,22 @@ export default class GameManager {
     }
 
     private start() {
-        this.reset();
+        this.resetScoreAndLevel();
         this.map = new Map();
     }
     
-    public reset() {
+    public resetScoreAndLevel() {
         this.level = 1;
         this.scoreObjective = this.level * LEVEL_SCORE_TO_ADD;
+        this.previousScoreObjective = 0;
         this.score = 0;
         levelBarImg.scaleX = 0;
         scoreText.setText(`Score: ${this.score}`);
     }
 
-    private levelUp() {
-        this.level++;
-        levelText.setText(`Level: ${this.level}`);
-        levelBarImg.scaleX = 0;
-        this.scoreObjective = this.level * LEVEL_SCORE_TO_ADD;
+    public reset() {
+        map.resetMap();
+        this.resetScoreAndLevel();
     }
 
     public changeCurrentSelectedPiece(newPiece:Piece):Piece {
@@ -59,7 +59,38 @@ export default class GameManager {
         this.isPieceSelectedInFrame = false;
     }
 
-    private scoreIt(scoreToType: ScoreTypes) {
+    private async scoreAndLevelUp(scoreType: ScoreTypes, pieces: Piece[]) {
+        await this.scoreIt(scoreType, pieces);
+        if (this.score >= this.scoreObjective) this.levelUp();
+    }
+
+    private levelUp() {
+        gameScene.sound.play('levelUpSound');
+        this.level++;
+        levelText.setText(`Level: ${this.level}`);
+        levelBarImg.scaleX = 0;
+        this.previousScoreObjective = this.scoreObjective;
+        this.scoreObjective = this.level * LEVEL_SCORE_TO_ADD + (this.level * 100);
+    }
+
+    private insertModalText(text: string | number, { x, y }: PositionInPixel, type = 'normal', color = '#ffffff') {
+        const levelText = gameScene.add.text(x, y, text.toString(), { 
+            font: 'bold 63px Geneva',
+            stroke: '#000000',
+            strokeThickness: 10,
+            color
+        }).setDepth(1.1).setOrigin(0.5, 0.5);
+        makeMovementAnimation(levelText, { x: levelText.x, y: levelText.y - 250 }, 600);
+
+        gameScene.tweens.add({
+            targets: levelText,
+            alpha: 0,
+            duration: 1000,
+            ease: 'Power2'
+        });
+    }
+
+    private async scoreIt(scoreToType: ScoreTypes, pieces: Piece[]) {
         let toScore = 100;
         switch (scoreToType) {
             case '3line': 
@@ -84,20 +115,38 @@ export default class GameManager {
                 console.log('No scoreType was found');
         }
 
+        this.calculateScoreUI(pieces, toScore);
         this.score += toScore;
-        this.updateLevelBar();
+        await this.updateLevelBar();
         
         scoreText.setText(`Score: ${this.score}`);
     }
 
-    private updateLevelBar() {
-        const newScaleXVal = this.score / this.scoreObjective;
-        gameScene.tweens.add({
-            targets: levelBarImg,
-            scaleX: newScaleXVal,
-            ease: 'Linear',     
-            duration: 500,
-            repeat: 0
+    calculateScoreUI(pieces: Piece[], score) {
+        const arrayXValues = [];
+        const arrayYValues = [];
+        pieces.forEach((piece) => {
+            arrayXValues.push(piece.currentTile.tileX);
+            arrayYValues.push(piece.currentTile.tileY);
+        });
+        const tileX = average(arrayXValues) as TileNumbers;
+        const tileY = average(arrayYValues) as TileNumbers;
+        const color = getPieceHashColor(pieces[0]);
+        this.insertModalText(score, convertTileToPosition({ tileX, tileY }), 'score', color);
+    }
+
+    private async updateLevelBar() {
+        return new Promise<void>((resolve) => {
+            const newScaleXVal = (this.score - this.previousScoreObjective) / (LEVEL_SCORE_TO_ADD + (this.level > 1 ? this.level * 100 : 0)); 
+            gameScene.tweens.add({
+                targets: levelBarImg,
+                scaleX: newScaleXVal,
+                ease: 'Linear',
+                duration: 500,
+                onComplete() {
+                    resolve();
+                }
+            });
         });
     }
 
@@ -105,7 +154,7 @@ export default class GameManager {
         gameScene.sound.play(`bubble${rndNumber(1, 3, true)}`);
         setTimeout(() => {
             gameScene.sound.play(`bubble${rndNumber(1, 3, true)}`);
-        }, 150)
+        }, 150);
     }
 
     public async makeTwoPieceAnimation(currentPiece: Piece, lastPiece: Piece): Promise<null> {
@@ -136,28 +185,48 @@ export default class GameManager {
             }
 
             if (matchArrOfPieces.length >= 3) {
-                this.matchIt(matchArrOfPieces);
+                await this.matchIt(matchArrOfPieces);
             }
             if (opositePieceMatchArr.length >= 3) {
-                this.matchIt(opositePieceMatchArr);
+                await this.matchIt(opositePieceMatchArr);
             } 
+
             if (opositePieceMatchArr.length <= 0 && matchArrOfPieces.length <= 0) {
                 await pieceToSwitch.switch(this.lastPiece);
             }
+
+            let resultForGameOver = map.isBoardMatch(map.getCurrentMap());
+            if (!resultForGameOver.isMatch) {
+                this.gameOver();
+            } else {
+                do {
+                    await this.matchAgain(resultForGameOver.piece);
+                    resultForGameOver = map.isBoardMatch(map.getCurrentMap());
+                } while (resultForGameOver.isMatch);                    
+            } 
 
             return true;
         }
         return false;
     }
 
-    private async matchIt(pieces:Piece[]): Promise<null> {
+    private async matchAgain (piece: Piece) {
+        const { matchArrOfPieces, finalMap } = map.checkMatch(map.getCurrentMap(), piece);
+        await this.matchIt(matchArrOfPieces);
+    }
+
+    private gameOver() {
+        console.log("GAMEOVER")
+    }
+
+    private matchIt = async (pieces:Piece[]): Promise<null> => { 
         this.playExplodingBubbleSound();
         await makeScaleAnimation(pieces);
         pieces.forEach((piece) => piece.destroy());
-        this.scoreIt('3line');
-        if (this.score >= this.scoreObjective) this.levelUp();
+        this.scoreAndLevelUp('3line', pieces);
         this.fallPieces(pieces);
         this.generateMore();
+        await timeout(500);
         return null;
     }
 
@@ -192,11 +261,11 @@ export default class GameManager {
         } while (currentMatchArr.length > 0);
     }
 
-    private generateMore() {
+    private async generateMore() {
         const currentMap = map.getCurrentMap();
         const emptyTiles: PositionInTile[] = [];
         currentMap.forEach((line, tileX: TileNumbers) => line.forEach((piece, tileY: TileNumbers) => {
-            if (!piece) emptyTiles.push({ tileX, tileY });
+            if (!piece || !piece.active) emptyTiles.push({ tileX, tileY });
         }));
 
         emptyTiles.sort((a, b) => b.tileY - a.tileY);
@@ -214,7 +283,8 @@ export default class GameManager {
             const yPositon = (INITIAL_BOARD_SCREEN.HEIGHT - (TILE.HEIGHT * contador));
             const newPosition = { x: newTilePosition.x, y: yPositon };
             const piece = new Piece(pieceTypeLetter, newPosition);
-            map.setPieceOnTile(piece, tilePosition);
+
+            piece.updatePiecePositionAndTile(tilePosition);
             makeMovementAnimation(piece, convertTileToPosition(tilePosition), 200);
         });
     }

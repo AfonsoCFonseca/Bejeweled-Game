@@ -21,6 +21,27 @@ export function convertTileToPosition(positionInTile: PositionInTile): PositionI
     const y = positionInTile.tileY * TILE.HEIGHT + INITIAL_BOARD_SCREEN.HEIGHT;
     return { x, y };
 }
+export function getPieceHashColor(piece: Piece): string {
+    switch (piece.pieceTypeByLetter) {
+        case 'w':
+            return '#cdeff6';
+        case 'r':
+            return '#ff0016';
+        case 'y':
+            return '#fff03d';
+        case 'g':
+            return '#00e433';
+        case 'o':
+            return '#ff471c';
+        case 'b':
+            return '#0060e4';
+        case 'p':
+            return '#e101cd';
+        default: 
+            console.log('getPieceTypeEnum failed');
+            return null;
+    }
+}
 export function getPieceTypeEnum(type:string): PIECE_TYPES | null {
     switch (type) {
         case 'w':
@@ -105,3 +126,7 @@ export const isNumberInsideBoard = (currentNumb:number):boolean => {
     if (currentNumb >= MAP.TOTAL_TILES_WIDTH || currentNumb < 0) return false;
     return true;
 };
+
+export const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const average = arr => arr.reduce((a,b) => a + b, 0) / arr.length;

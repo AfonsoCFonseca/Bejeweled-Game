@@ -32,7 +32,7 @@ export default class Piece extends Phaser.GameObjects.Sprite {
     }
 
     private makeSelection() {
-        if (!gameManager.isPieceSelectedInFrame && this.frameImg === null) {
+        if ((!gameManager.isPieceSelectedInFrame && this.frameImg === null) || !map.isPieceAdjacent(this)) {
             this.frameImg = gameScene.add.image(this.currentPosition.x, this.currentPosition.y, 'selectedTile').setDepth(1).setOrigin(0.5, 0.5);
             gameManager.changeCurrentSelectedPiece(this);
         }
