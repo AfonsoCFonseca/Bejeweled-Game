@@ -18,8 +18,8 @@ export const config = {
         //debug: true,
         }
     },
-    scene: [GameScene, MenuScene]
-    // scene: [MenuScene, GameScene]
+    // scene: [GameScene, MenuScene]
+    scene: [MenuScene, GameScene]
 };
 
 export const game = new Phaser.Game(config);

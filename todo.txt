@@ -1,5 +1,7 @@
-If the more shows an unmatchable set, it should generate GameOver
 Score with proper matches
+First search must have a future match
+
+Bug: No after match, não está a matchar mais de 4
 
 const fakeMap = [
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
@@ -11,14 +13,3 @@ const fakeMap = [
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
             ['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w'],
         ];
-
-
-
-                   ['y', 'y', 'g', 'y', 'r', 'w', 'w', 'r'],
-            ['g', 'b', 'w', 'r', 'g', 'p', 'p', 'y'],
-            ['y', 'r', 'g', 'w', 'y', 'r', 'w', 'r'],
-            ['b', 'y', 'b', 'g', 'r', 'r', 'g', 'w'],
-            ['r', 'g', 'p', 'w', 'w', 'g', 'y', 'y'],
-            ['y', 'y', 'p', 'b', 'y', 'p', 'w', 'g'],
-            ['b', 'g', 'r', 'y', 'y', 'b', 'r', 'p'],
-            ['g', 'y', 'w', 'b', 'w', 'b', 'w', 'g']

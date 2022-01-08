@@ -44,7 +44,11 @@ It was also necessary to implement the match system for the opposite piece that 
 
 Created a level system that levels up every time the user reaches another 1200 score to the total score he has. For a better understanding of the progress in the game, I've added a UI bar to let the user know in which part of the level he is, depending on his score, I also, added text to inform the user of his current. Made a few improvements to the scoring system and created some exploding sounds for each time a match is made. The button reset was added to the UI for a fast reset of the board, level and score.
 
-Every time a set of pieces match, I generate the exact number of pieces on the same Y axis with an X axis of (x * TILE.HEIGHT) + initial board height with a random generation of piece_type, then set the current empty tiles on the board to the generated ones and add animation so they move from the upper board to the desired location
+Every time a set of pieces match, I generate the exact number of pieces on the same Y axis with an X axis of (x * TILE.HEIGHT) + initial board height with a random generation of piece_type, then set the current empty tiles on the board to the generated ones and add animation so they move from the upper board to the desired location.
+
+Improved the UI with small borders on the score and added a restart and menu button. Made the logic for the match sequence, each time a piece match with others the map changes and there's a validation required for two mechanics, looking for a match sequence and checking if exists any possible future match... I started matching the actual pieces and let the game over trigger to the end of the game. Also, added some sound to the level up trigger, created some UI scoring triggered where the match was made and with different colors, depending on the pieces that match.
+
+The Game Over verification was the last core thing that I built. For every movement of the pieces and after the matches, I run method that checks every possible movemento for every piece to ensure that there's still some combinations left to do, if there isn't a game over screen is shown with the score and restart button
 
 # Future Implementation
 upgrade piece after a 4> piece match

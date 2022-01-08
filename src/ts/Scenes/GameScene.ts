@@ -24,6 +24,8 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('LevelBar', 'assets/levelbar.jpg');
         this.load.image('ButtonReset', 'assets/buttonReset.png');
         this.load.image('ButtonMenu', 'assets/buttonMenu.png');
+        this.load.image('RestartButton', 'assets/restartBtn.png');
+        this.load.image('ScoreMenu', 'assets/scoreMenu.jpg');
 
         this.load.audio('bubble1', 'assets/bubble_single_1.mp3');
         this.load.audio('bubble2', 'assets/bubble_single_2.mp3');

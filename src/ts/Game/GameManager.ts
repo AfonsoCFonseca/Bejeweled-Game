@@ -1,6 +1,6 @@
 import Piece from './Piece'
 import Map, { map } from './Map'
-import { average, convertTileToPosition, getPieceHashColor, getRandomValueFromArray, isNumberInsideBoard, makeMovementAnimation, makeScaleAnimation, rndNumber, timeout } from '../Utils/utils';
+import { average, convertPositionToTile, convertTileToPosition, getPieceHashColor, getRandomValueFromArray, isNumberInsideBoard, makeMovementAnimation, makeScaleAnimation, rndNumber, timeout } from '../Utils/utils';
 import { gameScene, levelBarImg, scoreText, levelText } from '../Scenes/GameScene';
 import { PositionInPixel, PositionInTile, ScoreTypes, TileNumbers } from '../game.interfaces';
 import { HALF_SCREEN, INITIAL_BOARD_SCREEN, LEVEL_SCORE_TO_ADD, PIECE_TYPES, TILE } from '../Utils/gameValues';
@@ -19,8 +19,8 @@ export default class GameManager {
     isPieceSelectedInFrame = false;
 
     constructor() {
-        this.start();
         gameManager = this;
+        this.start();
     }
 
     private start() {
@@ -196,13 +196,19 @@ export default class GameManager {
             }
 
             let resultForGameOver = map.isBoardMatch(map.getCurrentMap());
-            if (!resultForGameOver.isMatch) {
+
+            const resultForFutureMoves = map.isExistantFutureMoves(map.getCurrentMap());
+            if (!resultForGameOver.isMatch && !resultForFutureMoves) {
                 this.gameOver();
-            } else {
+            }
+
+            if (resultForGameOver.isMatch) {
                 do {
                     await this.matchAgain(resultForGameOver.piece);
                     resultForGameOver = map.isBoardMatch(map.getCurrentMap());
-                } while (resultForGameOver.isMatch);                    
+                } while (resultForGameOver.isMatch);
+                
+                if (!map.isExistantFutureMoves(map.getCurrentMap())) this.gameOver();
             } 
 
             return true;
@@ -210,13 +216,21 @@ export default class GameManager {
         return false;
     }
 
-    private async matchAgain (piece: Piece) {
+    private async matchAgain(piece: Piece) {
         const { matchArrOfPieces, finalMap } = map.checkMatch(map.getCurrentMap(), piece);
         await this.matchIt(matchArrOfPieces);
     }
 
-    private gameOver() {
-        console.log("GAMEOVER")
+    public gameOver() {
+        let scoreMenu = gameScene.add.image(INITIAL_BOARD_SCREEN.WIDTH - TILE.WIDTH / 2 - 20, 500, 'ScoreMenu').setDepth(1).setOrigin(0, 0);
+        let buttonMenu = gameScene.add.image(scoreMenu.x + (scoreMenu.width / 2) - 188, scoreMenu.y + 250, 'RestartButton').setDepth(1).setOrigin(0, 0);
+        buttonMenu.setInteractive({ useHandCursor: true });
+        
+        buttonMenu.on('pointerup', () => {
+            buttonMenu.destroy();
+            scoreMenu.destroy();
+            this.reset();
+        });
     }
 
     private matchIt = async (pieces:Piece[]): Promise<null> => { 

@@ -46,7 +46,7 @@ export default class Piece extends Phaser.GameObjects.Sprite {
         chosenPiece.updatePiecePositionAndTile(cTile);
     }
 
-    public updatePiecePositionAndTile(tile: PositionInTile) {
+    updatePiecePositionAndTile = (tile: PositionInTile) => {
         this.currentTile = tile;
         this.currentPosition = convertTileToPosition(tile);
         map.setPieceOnTile(this, tile);

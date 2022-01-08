@@ -3,6 +3,7 @@ import { HALF_SCREEN, MAP, TILE, PIECE_TYPES, INITIAL_BOARD_SCREEN, TOTAL_OF_PIE
 import { getRandomValueFromArray, getPieceTypeNumber, isNumberInsideBoard, convertTileToPosition, removeDuplicates } from '../Utils/utils';
 import { gameManager } from './GameManager';
 import Piece from './Piece'
+import * as _ from 'lodash';
 //import * as gv from '../Utils/gameValues';
 // eslint-disable-next-line import/prefer-default-export
 export let map: Map;
@@ -39,22 +40,21 @@ export default class Map {
 
     createFakeMap() {
         let newFakeMap: Piece[][] = [];
-        const fakeMap = [
-            ['y', 'y', 'g', 'y', 'r', 'w', 'w', 'r'],
-            ['g', 'b', 'w', 'r', 'g', 'r', 'p', 'y'],
-            ['y', 'r', 'g', 'w', 'y', 'r', 'w', 'r'],
-            ['b', 'y', 'b', 'g', 'r', 'r', 'g', 'w'],
-            ['r', 'g', 'p', 'w', 'w', 'g', 'y', 'y'],
-            ['y', 'y', 'p', 'b', 'y', 'y', 'y', 'g'],
-            ['b', 'g', 'r', 'y', 'y', 'b', 'r', 'p'],
-            ['g', 'y', 'w', 'b', 'w', 'b', 'w', 'g']
+        const fakeMap = [ // No match
+            ['r', 'r', 'o', 'g', 'y', 'p', 'g', 'b'],
+            ['p', 'o', 'y', 'w', 'r', 'p', 'o', 'p'],
+            ['o', 'p', 'b', 'g', 'o', 'b', 'r', 'b'],
+            ['b', 'r', 'b', 'p', 'p', 'b', 'g', 'o'],
+            ['o', 'o', 'r', 'w', 'o', 'y', 'g', 'o'],
+            ['y', 'b', 'w', 'p', 'b', 'r', 'y', 'b'],
+            ['y', 'b', 'o', 'o', 'b', 'b', 'p', 'w'],
+            ['g', 'p', 'g', 'y', 'g', 'w', 'o', 'r']
         ];
 
         fakeMap.forEach((line, i) => line.forEach((piece, j) => {
             if (!newFakeMap[i] || newFakeMap[i].length === 0) newFakeMap[i] = [];
             newFakeMap[i].push(new Piece(piece, convertTileToPosition({ tileX: i as TileNumbers, tileY: j as TileNumbers })));
         }));
-
         this.currentMap = newFakeMap;
     }
 
@@ -89,7 +89,7 @@ export default class Map {
         return this.currentMap[tilePos.tileX][tilePos.tileY];
     }
 
-    public setPieceOnTile(newPiece:Piece | null, tile: PositionInTile) {
+    setPieceOnTile = (newPiece:Piece | null, tile: PositionInTile) => {
         this.currentMap[tile.tileX][tile.tileY] = newPiece;
     }
 
@@ -124,14 +124,55 @@ export default class Map {
         return result;
     }
 
-    public checkMatch(map:Piece[][], piece:Piece): { matchArrOfPieces: Piece[], finalMap: Piece[][] } {
+    public isExistantFutureMoves(tempMap: Piece[][]): boolean {
+        for (let i = 0; i < tempMap.length; i++) {
+            for (let j = 0; j < tempMap[i].length; j++) {
+                if (map.calculatEachFourMoves(i, j)) {
+                    return true;
+                } 
+            }
+        }
+        return false;
+    }
+
+    private calculatEachFourMoves(mTileX, mTileY) {
+        const arr = [1, -1, 1, -1];
+        for (let i = 0; i < 4; i++) {
+            let possibleMap: Piece[][] = [];
+            this.getCurrentMap().forEach((line, indexX) => line.forEach((piece, indexY) => {
+                if (!possibleMap[indexX]) possibleMap[indexX] = [];
+                possibleMap[indexX].push(piece);
+            }));
+            let piece = Object.assign({}, possibleMap[mTileX][mTileY]) ;
+
+            const tileX = (i >= 2 ? piece.currentTile.tileX + arr[i] : piece.currentTile.tileX) as TileNumbers;
+            const tileY = (i >= 2 ? piece.currentTile.tileY : piece.currentTile.tileY + arr[i]) as TileNumbers;
+            if (isNumberInsideBoard(i >= 2 ? tileX : tileY)) {
+                const futurePiece = Object.assign({}, possibleMap[tileX][tileY]); 
+                const currentPiece = Object.assign({}, piece);
+
+                possibleMap[tileX][tileY] = currentPiece;
+                possibleMap[tileX][tileY].currentTile = { tileX, tileY };
+
+                possibleMap[piece.currentTile.tileX][piece.currentTile.tileY] = futurePiece;
+                possibleMap[piece.currentTile.tileX][piece.currentTile.tileY].currentTile = { tileX: piece.currentTile.tileX, tileY: piece.currentTile.tileY };
+
+                const currentSituation = map.checkMatch(possibleMap, possibleMap[tileX][tileY]);
+                if (currentSituation.matchArrOfPieces.length >= 3) {
+                    return true;
+                } 
+            }
+        }
+        return false;
+    }
+
+    public checkMatch(map:Piece[][], piece:Piece, validate = false): { matchArrOfPieces: Piece[], finalMap: Piece[][] } {
         const { pieceTypeByLetter } = piece;
         const arr = [1, -1, 1, -1];
         let arrOfPiecesToMatch: Piece[] = [piece]; //First Piece
         let direction: 'horizontal' | 'vertical' = 'horizontal';
         let matchArrOfPieces: Piece[] = [];
         let finalMap: Piece[][];
-
         for (let i = 0; i < 4; i++) {
             let tileX = piece.currentTile.tileX + arr[i];
             let { tileY } = piece.currentTile;
@@ -144,6 +185,7 @@ export default class Map {
 
             if (isNumberInsideBoard(i >= 2 ? tileY : tileX)) {
                 const pieceSelected = map[tileX][tileY];
+                if(validate) console.log(pieceSelected)
                 if (pieceSelected && pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
                     arrOfPiecesToMatch.push(pieceSelected); //Second Piece
                     const obj = this.checkAdjacentForMatch(map, pieceSelected, piece, arrOfPiecesToMatch, arr[i], direction); //Third and more Pieces
