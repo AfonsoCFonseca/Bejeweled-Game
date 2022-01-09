@@ -51,8 +51,8 @@ Improved the UI with small borders on the score and added a restart and menu but
 The Game Over verification was the last core thing that I built. For every movement of the pieces and after the matches, I run method that checks every possible movemento for every piece to ensure that there's still some combinations left to do, if there isn't a game over screen is shown with the score and restart button
 
 # Future Implementation
-upgrade piece after a 4> piece match
-upgrade piece after a L piece match
+- a 4 or bigger match should create a special piece that explodes
+- a L match should create a special piece that destroy all specific kind of pieces that match
 
 ---------------------------------------------------------------
 # Sketches & Evolution
