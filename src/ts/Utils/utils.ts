@@ -1,4 +1,4 @@
-import { PIECE_TYPES, PositionInPixel, PositionInTile, TileNumbers } from '../game.interfaces';
+import { PIECE_TYPES, PositionInPixel, PositionInTile, ScoreTypes, TileNumbers } from '../game.interfaces';
 import Piece from '../Game/Piece';
 import { gameScene } from '../Scenes/GameScene'
 import { INITIAL_BOARD_SCREEN, MAP, TILE } from './gameValues';
@@ -130,3 +130,30 @@ export const isNumberInsideBoard = (currentNumb:number):boolean => {
 export const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const average = arr => arr.reduce((a,b) => a + b, 0) / arr.length;
+
+export const recognizeScoreType = (pieces:Piece[]): ScoreTypes => {
+    let scoreType;
+    let xCounter = 1;
+    let yCounter = 1;
+    let currentX = pieces[0].currentTile.tileX;
+    let currentY = pieces[0].currentTile.tileY;
+    pieces.forEach(({ currentTile }) => {
+        if (currentTile.tileX !== currentX) {
+            xCounter += 1;
+            currentX = currentTile.tileX;
+        }
+        if (currentTile.tileY !== currentY) {
+            yCounter += 1;
+            currentY = currentTile.tileY;
+        }
+    });
+
+    if (xCounter !== 1 && yCounter !== 1) {
+        const biggestCounter = xCounter > yCounter ? xCounter : yCounter;
+        scoreType = `${biggestCounter}L` as ScoreTypes;
+    } else {
+        scoreType = `${xCounter === 1 ? yCounter : xCounter}line` as ScoreTypes;
+    }
+
+    return scoreType;
+};

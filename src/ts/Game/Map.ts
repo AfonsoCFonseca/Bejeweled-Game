@@ -41,14 +41,14 @@ export default class Map {
     createFakeMap() {
         let newFakeMap: Piece[][] = [];
         const fakeMap = [ // No match
-            ['r', 'r', 'o', 'g', 'y', 'p', 'g', 'b'],
-            ['p', 'o', 'y', 'w', 'r', 'p', 'o', 'p'],
-            ['o', 'p', 'b', 'g', 'o', 'b', 'r', 'b'],
-            ['b', 'r', 'b', 'p', 'p', 'b', 'g', 'o'],
-            ['o', 'o', 'r', 'w', 'o', 'y', 'g', 'o'],
-            ['y', 'b', 'w', 'p', 'b', 'r', 'y', 'b'],
-            ['y', 'b', 'o', 'o', 'b', 'b', 'p', 'w'],
-            ['g', 'p', 'g', 'y', 'g', 'w', 'o', 'r']
+            ['g', 'y', 'b', 'b', 'r', 'g', 'p', 'p'],
+            ['w', 'w', 'g', 'g', 'g', 'w', 'g', 'g'],
+            ['w', 'g', 'r', 'r', 'g', 'p', 'r', 'p'],
+            ['r', 'w', 'b', 'w', 'r', 'w', 'r', 'b'],
+            ['w', 'y', 'g', 'r', 'w', 'b', 'w', 'b'],
+            ['w', 'y', 'y', 'w', 'w', 'p', 'g', 'r'],
+            ['p', 'w', 'b', 'p', 'g', 'p', 'g', 'y'],
+            ['w', 'b', 'b', 'w', 'y', 'w', 'p', 'y'],
         ];
 
         fakeMap.forEach((line, i) => line.forEach((piece, j) => {
@@ -166,7 +166,7 @@ export default class Map {
         return false;
     }
 
-    public checkMatch(map:Piece[][], piece:Piece, validate = false): { matchArrOfPieces: Piece[], finalMap: Piece[][] } {
+    public checkMatch(map:Piece[][], piece:Piece): { matchArrOfPieces: Piece[], finalMap: Piece[][] } {
         const { pieceTypeByLetter } = piece;
         const arr = [1, -1, 1, -1];
         let arrOfPiecesToMatch: Piece[] = [piece]; //First Piece
@@ -185,7 +185,6 @@ export default class Map {
 
             if (isNumberInsideBoard(i >= 2 ? tileY : tileX)) {
                 const pieceSelected = map[tileX][tileY];
-                if(validate) console.log(pieceSelected)
                 if (pieceSelected && pieceSelected.pieceTypeByLetter === pieceTypeByLetter) {
                     arrOfPiecesToMatch.push(pieceSelected); //Second Piece
                     const obj = this.checkAdjacentForMatch(map, pieceSelected, piece, arrOfPiecesToMatch, arr[i], direction); //Third and more Pieces
@@ -195,6 +194,7 @@ export default class Map {
                 }
             }
         }
+
         matchArrOfPieces = removeDuplicates(matchArrOfPieces);
 
         return { matchArrOfPieces, finalMap };

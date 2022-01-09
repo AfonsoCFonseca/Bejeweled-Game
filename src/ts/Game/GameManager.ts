@@ -1,6 +1,6 @@
 import Piece from './Piece'
 import Map, { map } from './Map'
-import { average, convertPositionToTile, convertTileToPosition, getPieceHashColor, getRandomValueFromArray, isNumberInsideBoard, makeMovementAnimation, makeScaleAnimation, rndNumber, timeout } from '../Utils/utils';
+import { average, convertPositionToTile, convertTileToPosition, getPieceHashColor, getRandomValueFromArray, isNumberInsideBoard, makeMovementAnimation, makeScaleAnimation, recognizeScoreType, rndNumber, timeout } from '../Utils/utils';
 import { gameScene, levelBarImg, scoreText, levelText } from '../Scenes/GameScene';
 import { PositionInPixel, PositionInTile, ScoreTypes, TileNumbers } from '../game.interfaces';
 import { HALF_SCREEN, INITIAL_BOARD_SCREEN, LEVEL_SCORE_TO_ADD, PIECE_TYPES, TILE } from '../Utils/gameValues';
@@ -17,6 +17,7 @@ export default class GameManager {
     scoreObjective: number;
     previousScoreObjective: number;
     isPieceSelectedInFrame = false;
+    isMoving = false;
 
     constructor() {
         gameManager = this;
@@ -59,7 +60,8 @@ export default class GameManager {
         this.isPieceSelectedInFrame = false;
     }
 
-    private async scoreAndLevelUp(scoreType: ScoreTypes, pieces: Piece[]) {
+    private async scoreAndLevelUp(pieces: Piece[]) {
+        const scoreType = recognizeScoreType(pieces);
         await this.scoreIt(scoreType, pieces);
         if (this.score >= this.scoreObjective) this.levelUp();
     }
@@ -94,22 +96,22 @@ export default class GameManager {
         let toScore = 100;
         switch (scoreToType) {
             case '3line': 
-                toScore = 100;
+                toScore = 50;
                 break;
             case '4line': 
                 toScore = 100;
                 break;
             case '5line': 
-                toScore = 100;
+                toScore = 500;
                 break;
             case '6line': 
-                toScore = 100;
-                break;
-            case '4L':
-                toScore = 100;
+                toScore = 800;
                 break;
             case '3L':
-                toScore = 100;
+                toScore = 800;
+                break;
+            case '4L':
+                toScore = 1000;
                 break;
             default:
                 console.log('No scoreType was found');
@@ -172,6 +174,7 @@ export default class GameManager {
 
     public async piecesMovement(pieceToSwitch:Piece) {
         if (this.isPieceSelectedInFrame && map.isPieceAdjacent(pieceToSwitch)) {
+            this.isMoving = true;
             this.resetPiecesForAction();
             await pieceToSwitch.switch(this.lastPiece);
             const { matchArrOfPieces, finalMap } = map.checkMatch(map.getCurrentMap(), this.lastPiece);
@@ -211,6 +214,7 @@ export default class GameManager {
                 if (!map.isExistantFutureMoves(map.getCurrentMap())) this.gameOver();
             } 
 
+            this.isMoving = false;
             return true;
         }
         return false;
@@ -237,7 +241,7 @@ export default class GameManager {
         this.playExplodingBubbleSound();
         await makeScaleAnimation(pieces);
         pieces.forEach((piece) => piece.destroy());
-        this.scoreAndLevelUp('3line', pieces);
+        this.scoreAndLevelUp(pieces);
         this.fallPieces(pieces);
         this.generateMore();
         await timeout(500);

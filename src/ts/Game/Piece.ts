@@ -26,13 +26,14 @@ export default class Piece extends Phaser.GameObjects.Sprite {
     }
 
     private async isClicked() {
-        const isAction = await gameManager.piecesMovement(this);
-        
-        if (!isAction) this.makeSelection();
+        if (!gameManager.isMoving) {
+            const isAction = await gameManager.piecesMovement(this);
+            if (!isAction) this.makeSelection();
+        }
     }
 
     private makeSelection() {
-        if ((!gameManager.isPieceSelectedInFrame && this.frameImg === null) || !map.isPieceAdjacent(this)) {
+        if (!gameManager.isPieceSelectedInFrame || this.frameImg === null) {
             this.frameImg = gameScene.add.image(this.currentPosition.x, this.currentPosition.y, 'selectedTile').setDepth(1).setOrigin(0.5, 0.5);
             gameManager.changeCurrentSelectedPiece(this);
         }
@@ -50,7 +51,7 @@ export default class Piece extends Phaser.GameObjects.Sprite {
         this.currentTile = tile;
         this.currentPosition = convertTileToPosition(tile);
         map.setPieceOnTile(this, tile);
-    }
+    };
 
     public clearFrame() {
         if (this.frameImg) {
