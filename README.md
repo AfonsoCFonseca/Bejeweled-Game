@@ -10,12 +10,19 @@ Classic Bejeweled game in Phaser 3.0 written in Typescript with Jest unit test
 
 
 ---------------------------------------------------------------
-# Unit Testing
-First installed Jest, created the jest.config.js with some special configuration so it can work with canvas
-Followed the instructions from this link for Jest installation
-https://tnodes.medium.com/setting-up-jest-with-react-and-phaser-422b174ec87e
+# How to Deploy
+On the project terminal run: 
+```
+npm i;
+npm run build;
+node index
+```
+then access on your browser to: localhost:8080
 
-jest, jest-canvas-mock, jest-ts is necessary
+To access a live version running on a server ( the server may take a few seconds to boot, before starting the game )
+
+-> https://bejeweled1991.onrender.com/ <-
+( also, it's a slow server )
 
 # Structure
 Build with 2 Game Scenes ( Menu and a gameplay scene ), a GameManger for handling general management tasks, a Map for the Board creation and storing the current Pieces and a Piece Class for each existing piece in the map
